@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<BES xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="BES.xsd">
+	<Analysis>
+		<Title>Windows Admin Users Compliance Status</Title>
+		<Description><![CDATA[&lt;enter a description of the analysis here&gt; ]]></Description>
+		<Relevance>name of operating system starts with "Win"</Relevance>
+		<Source>Internal</Source>
+		<SourceReleaseDate>2018-09-15</SourceReleaseDate>
+		<MIMEField>
+			<Name>x-fixlet-modification-time</Name>
+			<Value>Sun, 16 Sep 2018 04:10:08 +0000</Value>
+		</MIMEField>
+		<Domain>BESC</Domain>
+		<Property Name="Status" ID="1"><![CDATA[if exists file (parent folder of regapp "besclient.exe" as string & "\ComplianceWhitelist\ComplianceWhitelist.txt") then if number of (elements of (set of ((following texts of firsts "\" of unique values of ((members of local group "Administrators") as string) as lowercase)) - set of (unique values of (lines of file (parent folder of regapp "besclient.exe" as string & "\ComplianceWhitelist\ComplianceWhitelist.txt"))))) = 0 then "Compliant" else "Not-Compliant" else "No Compliance Whitelist on Endpoint"]]></Property>
+		<Property Name="Unauthorized Admins" ID="2"><![CDATA[if exists file (parent folder of regapp "besclient.exe" as string & "\ComplianceWhitelist\ComplianceWhitelist.txt") then "[" & concatenation "] - [" of (elements of (set of ((following texts of firsts "\" of unique values of ((members of local group "Administrators") as string) as lowercase)) - set of (unique values of (lines of file (parent folder of regapp "besclient.exe" as string & "\ComplianceWhitelist\ComplianceWhitelist.txt"))))) & "]" else "No Compliance Whitelist on Endpoint"]]></Property>
+		<Property Name="Whitelist Files Match" ID="3"><![CDATA[if exists file (((data folder of client) as string) & "\__Global\__Download\actionsite\_listbackup.txt") then if exists file ((parent folder of regapp "BESClient.exe" as string) & "\ComplianceWhitelist\ComplianceWhitelist.txt") then (sha1 of file (((data folder of client) as string) & "\__Global\__Download\actionsite\_listbackup.txt") = sha1 of file ((parent folder of regapp "BESClient.exe" as string) & "\ComplianceWhitelist\ComplianceWhitelist.txt")) as string else "Primary Whitelist File Missing" else "Whitelist Backup File Missing"]]></Property>
+		<Property Name="Backup File hash" ID="4"><![CDATA[if exists file (((data folder of client) as string) & "\__Global\__Download\actionsite\_listbackup.txt") then (sha1 of file (((data folder of client) as string) & "\__Global\__Download\actionsite\_listbackup.txt")) else "Backup Whitelist File Missing"]]></Property>
+		<Property Name="Primary File hash" ID="5"><![CDATA[if exists file ((parent folder of regapp "BESClient.exe" as string) & "\ComplianceWhitelist\ComplianceWhitelist.txt") then sha1 of file ((parent folder of regapp "BESClient.exe" as string) & "\ComplianceWhitelist\ComplianceWhitelist.txt") else "Primary Whitelist File Missing"]]></Property>
+		<Property Name="Primary File Date" ID="6"><![CDATA[if exists file ((parent folder of regapp "BESClient.exe" as string) & "\ComplianceWhitelist\ComplianceWhitelist.txt") then (modification time of file ((parent folder of regapp "BESClient.exe" as string) & "\ComplianceWhitelist\ComplianceWhitelist.txt")) as string else "Primary Whitelist File Missing"]]></Property>
+		<Property Name="Backup File Date" ID="7"><![CDATA[if exists file (((data folder of client) as string) & "\__Global\__Download\actionsite\_listbackup.txt") then (modification time of file (((data folder of client) as string) & "\__Global\__Download\actionsite\_listbackup.txt")) as string else "Backup Whitelist File Missing"]]></Property>
+		<Property Name="Name/Pwd Age of Admins" ID="8"><![CDATA["[" & concatenation "] - [" of (((names of it, password age of it) of users whose (admin privilege of it as string contains "True")) as string) & "]"]]></Property>
+	</Analysis>
+</BES>
